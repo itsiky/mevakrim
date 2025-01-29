@@ -155,55 +155,6 @@
     <div id="error-message">Unable to access the camera. Please check your permissions.</div>
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
-    <script>   
-        // Importing TailwindCSS for styling
-const style = `
-  <style>
-    body { font-family: Arial, sans-serif; background: #f3f4f6; text-align: center; padding: 20px; }
-    .container { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-    button { background: #4F46E5; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; transition: background 0.3s; }
-    button:hover { background: #4338CA; }
-    canvas { margin-top: 10px; border-radius: 5px; }
-  </style>
-`;
-document.head.insertAdjacentHTML("beforeend", style);
-
-// Creating the webcam photo editor UI
-document.body.innerHTML = `
-  <div class='container'>
-    <h2>Webcam Photo Editor</h2>
-    <video id='video' width='100%' autoplay></video>
-    <br>
-    <button id='snap'>Take Photo</button>
-    <br>
-    <canvas id='canvas' width='400' height='300'></canvas>
-    <br>
-    <button id='download'>Download</button>
-  </div>
-`;
-
-// Accessing webcam and capturing image
-navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
-  document.getElementById('video').srcObject = stream;
-});
-
-document.getElementById('snap').addEventListener('click', () => {
-  let canvas = document.getElementById('canvas');
-  let context = canvas.getContext('2d');
-  let video = document.getElementById('video');
-  context.drawImage(video, 0, 0, canvas.width, canvas.height);
-});
-
-// Download functionality
-document.getElementById('download').addEventListener('click', () => {
-  let canvas = document.getElementById('canvas');
-  let link = document.createElement('a');
-  link.download = 'photo.png';
-  link.href = canvas.toDataURL();
-  link.click();
-});
-
-    </script>
     <script>
 
         const bgImageElement = document.querySelector('#bgImage');
