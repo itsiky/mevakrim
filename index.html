@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Camera Overlay with Capture</title>
+    <style>
+        /* Reset default margins and paddings */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Set the background image for the entire page */
+        body {
+            height: 50%;
+
+            max-width: 100%;
+            max-height: 50%;
+            aspect-ratio: 280 / 185;
+            /* Full viewport height */
+            /* Background image will be set via JavaScript */
+            background-size: cover;
+            /* Ensure the background covers the entire area */
+            background-position: center;
+            /* Center the background image */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            font-family: Arial, sans-serif;
+            background-color: black;
+        }
+
+        #content {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            background-repeat: no-repeat;
+            background-size: contain;
+            justify-content: center;
+            align-items: center;
+            background-image: url('./bg.png');
+            aspect-ratio: 280 / 185;
+        }
+
+        #camera-frame {
+            position: relative;
+            margin: auto;
+            aspect-ratio: 280 / 185;
+            height: 100%;
+            /* Calculate padding-top based on aspect ratio */
+            border: none;
+            overflow: hidden;
+            border-radius: 10px;
+        }
+
+        #bgImage {
+            position: absolute;
+            top: 0;
+            left: 0;
+            /* Ensure it aligns with the camera-frame */
+            height: 100%;
+            /* Fill the camera-frame */
+            height: 100%;
+            max-width: 100%;
+            max-height: 100%;
+            aspect-ratio: 280 / 185;
+            /* Fill the camera-frame */
+            /* Removed aspect-ratio to prevent conflict */
+            border: none;
+            overflow: hidden;
+
+            border-radius: 10px;
+            /* Optional: Adds rounded corners */
+        }
+
+        /* Container for the camera feed */
+        #camera-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            overflow: hidden;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+        }
+
+        /* Style for the video element */
+        #video {
+            position: absolute;
+            left: 35%;
+            top: 25%;
+            width: 100%;
+            height: 100%;
+            max-height: 65%;
+            aspect-ratio: 4 / 3;
+        }
+
+
+
+        /* Button styling */
+        #capture-button {
+            padding: 10px 20px;
+            font-size: 5em;
+            border: none;
+            border-radius: 5px;
+            background-color: rgba(255, 255, 255, 0.8);
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            transition: background-color 0.3s;
+            position: absolute;
+            bottom: 3%;
+
+        }
+
+        #capture-button:hover {
+            background-color: rgba(255, 255, 255, 1);
+        }
+
+        /* Optional: Message to display if camera access fails */
+        #error-message {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(255, 0, 0, 0.7);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            display: none;
+            /* Hidden by default */
+            font-size: 1em;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="camera-frame">
+        <video id="video" autoplay playsinline></video>
+        <img id="bgImage"
+            src="https://public-3beea495-f01c-4d2f-beb5-2213317d551d.s3.us-east-1.amazonaws.com/bg2.png" />
+
+    </div>
+    <button id="capture-button">צילום</button>
+
+
+    <!-- Error message display -->
+    <div id="error-message">Unable to access the camera. Please check your permissions.</div>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+    <script>
+
+        const bgImageElement = document.querySelector('#bgImage');
+        const originalWidth = bgImageElement.naturalWidth;
+        const originalHeight = bgImageElement.naturalHeight;
+        const aspectRatio = originalWidth / originalHeight;
+
+        // Select the video element and error message div
+        const video = document.getElementById('video');
+        const errorMessage = document.getElementById('error-message');
+        const captureButton = document.getElementById('capture-button');
+
+        // Function to initialize the camera
+        async function initCamera() {
+            try {
+                // Request access to the user's camera
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+                // Set the video source to the camera stream
+                video.srcObject = stream;
+            } catch (error) {
+                console.error('Error accessing the camera:', error);
+                // Display the error message to the user
+                errorMessage.style.display = 'block';
+            }
+        }
+
+        // Initialize the camera when the page loads
+        window.addEventListener('load', initCamera);
+
+        function captureDiv() {
+            html2canvas(document.querySelector('#bgImage'), { useCORS: true, allowTaint: true, backgroundColor: null }).then(canvas => {
+                html2canvas(document.querySelector('#video'), { useCORS: true, allowTaint: true }).then(videoCanvas => {
+                    const finalCanvas = document.createElement('canvas');
+                    finalCanvas.width = canvas.width;
+                    finalCanvas.height = canvas.height;
+
+                    const finalCtx = finalCanvas.getContext('2d');
+                    // get document width and height
+                    const windowSize = {
+                        width: document.documentElement.clientWidth,
+                        height: document.documentElement.clientHeight
+                    };
+
+                    const videoCanvasAspect = windowSize.height > windowSize.width ? 3 / 4 : 4 / 3;
+
+
+                    let videoHeight = finalCanvas.height / 100 * 65;
+                    let videoWidth = videoHeight * videoCanvasAspect;
+
+                    const videoX = finalCanvas.width - (finalCanvas.width * (windowSize.height > windowSize.width ? .32 : .45))
+                    const videoY = finalCanvas.height / 100 * 25;
+
+                    const videoCtx = videoCanvas.getContext('2d');
+                    const imageData = videoCtx.getImageData(0, 0, videoCanvas.width, videoCanvas.height);
+                    const data = imageData.data;
+
+                    for (let i = 0; i < data.length; i += 4) {
+                        const r = data[i];
+                        const g = data[i + 1];
+                        const b = data[i + 2];
+                        const gray = 0.3 * r + 0.59 * g + 0.11 * b;
+                        const contrastGray = gray * 0.5 + 128 * 0.5; // Lower the contrast by blending with mid-gray
+                        data[i] = data[i + 1] = data[i + 2] = gray;
+                    }
+
+                    videoCtx.putImageData(imageData, 0, 0);
+
+
+                    // Draw the video content on the final canvas with the 4:3 aspect ratio
+                    finalCtx.drawImage(videoCanvas, 0, 0, videoCanvas.width, videoCanvas.height, videoX, videoY, videoWidth, videoHeight);
+
+                    finalCtx.drawImage(canvas, 0, 0, finalCanvas.width, finalCanvas.height);
+
+
+                    let a = document.createElement('a');
+                    a.download = 'image.jpg';
+                    a.href = finalCanvas.toDataURL('image/jpeg');
+                    a.click();
+                })
+            });
+
+        }
+        // Add event listener to the capture button
+        captureButton.addEventListener('click', captureDiv);
+    </script>
+
+</body>
+
+
+</html>
