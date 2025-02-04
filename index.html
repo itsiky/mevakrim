@@ -228,6 +228,7 @@
                     const imageData = videoCtx.getImageData(0, 0, videoCanvas.width, videoCanvas.height);
                     const data = imageData.data;
 
+                   /* remove the grey option for the video 
                     for (let i = 0; i < data.length; i += 4) {
                         const r = data[i];
                         const g = data[i + 1];
@@ -235,7 +236,7 @@
                         const gray = 0.3 * r + 0.59 * g + 0.11 * b;
                         const contrastGray = gray * 0.5 + 128 * 0.5; // Lower the contrast by blending with mid-gray
                         data[i] = data[i + 1] = data[i + 2] = gray;
-                    }
+                    } */
 
                     videoCtx.putImageData(imageData, 0, 0);
 
