@@ -104,7 +104,27 @@
 
 
 
-        /* Button styling */
+
+         #capture-button {
+            padding: 15px 30px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 50px;
+            background-color: #007BFF; /* Deepseek blue */
+            color: #FFFFFF;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+            transition: background-color 0.3s, transform 0.2s;
+            position: absolute;
+            bottom: 20px;
+        }
+
+        #capture-button:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+            transform: scale(1.05);
+        }
+
+        /* Button styling  
         #capture-button {
             padding: 10px 20px;
             font-size: 5em;
@@ -121,7 +141,7 @@
 
         #capture-button:hover {
             background-color: rgba(255, 255, 255, 1);
-        }
+        } */
 
         /* Optional: Message to display if camera access fails */
         #error-message {
