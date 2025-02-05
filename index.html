@@ -3,35 +3,28 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Camera Overlay with Capture</title>
     <style>
-        /* Reset default margins and paddings */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        /* Set the background image for the entire page */
-        body {
-            height: 50%;
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+        }
 
-            max-width: 100%;
-            max-height: 50%;
-            aspect-ratio: 280 / 185;
-            /* Full viewport height */
-            /* Background image will be set via JavaScript */
-            background-size: cover;
-            /* Ensure the background covers the entire area */
-            background-position: center;
-            /* Center the background image */
+        body {
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            position: relative;
-            font-family: Arial, sans-serif;
             background-color: black;
+            position: relative;
         }
 
         #content {
@@ -39,123 +32,61 @@
             width: 100%;
             height: 100%;
             display: flex;
-            background-repeat: no-repeat;
-            background-size: contain;
             justify-content: center;
             align-items: center;
-            background-image: url('./bg_1.png');
-            aspect-ratio: 280 / 185;
         }
 
         #camera-frame {
-            position: relative;
-            margin: auto;
-            aspect-ratio: 280 / 185;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
             height: 100%;
-            /* Calculate padding-top based on aspect ratio */
-            border: none;
             overflow: hidden;
-            border-radius: 10px;
         }
 
-
-        #bgImage_new {
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100vw;
-          height: 100vh;
-          object-fit: cover;
-          z-index: -1;
-        } 
         #bgImage {
             position: absolute;
             top: 0;
             left: 0;
-            /* Ensure it aligns with the camera-frame */
-            height: 100%;
-            /* Fill the camera-frame */
-            height: 100%;
-            max-width: 100%;
-            max-height: 100%;
-            aspect-ratio: 280 / 185;
-            /* Fill the camera-frame */
-            /* Removed aspect-ratio to prevent conflict */
-            border: none;
-            overflow: hidden;
-
-            border-radius: 10px;
-            /* Optional: Adds rounded corners */
-        }
-
-        /* Container for the camera feed */
-        #camera-container {
-            position: absolute;
-            top: 0;
-            left: 0;
             width: 100%;
             height: 100%;
-            border: none;
-            overflow: hidden;
-            background-color: rgba(0, 0, 0, 0.5);
-            border-radius: 10px;
+            object-fit: cover;
+            z-index: 1;
         }
 
-        /* Style for the video element */
         #video {
             position: absolute;
-            left: 35%;
             top: 25%;
-            width: 100%;
-            height: 100%;
-            max-height: 65%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 65%;
+            height: auto;
             aspect-ratio: 4 / 3;
+            max-height: 65%;
+            z-index: 2;
         }
 
-
-
-
-         #capture-button {
-            padding: 40px 60px;
-            font-size: 3em;
+        #capture-button {
+            position: absolute;
+            bottom: 20px;
+            padding: 15px 40px;
+            font-size: 1.5em;
             border: none;
             border-radius: 50px;
-            background-color: #007BFF; /* Deepseek blue */
+            background-color: #007BFF;
             color: #FFFFFF;
             cursor: pointer;
             box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
             transition: background-color 0.3s, transform 0.2s;
-            position: absolute;
-            bottom: 20px;
+            z-index: 3;
         }
 
         #capture-button:hover {
-            background-color: #0056b3; /* Darker blue on hover */
+            background-color: #0056b3;
             transform: scale(1.05);
         }
 
-       
-
-        /* Button styling  
-        #capture-button {
-            padding: 10px 20px;
-            font-size: 5em;
-            border: none;
-            border-radius: 5px;
-            background-color: rgba(255, 255, 255, 0.8);
-            cursor: pointer;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-            transition: background-color 0.3s;
-            position: absolute;
-            bottom: 3%;
-
-        }
-
-        #capture-button:hover {
-            background-color: rgba(255, 255, 255, 1);
-        } */
-
-        /* Optional: Message to display if camera access fails */
         #error-message {
             position: absolute;
             bottom: 20px;
@@ -166,32 +97,51 @@
             padding: 10px 20px;
             border-radius: 5px;
             display: none;
-            /* Hidden by default */
             font-size: 1em;
+            z-index: 4;
+        }
+
+        /* Responsive adjustments */
+        @media screen and (max-width: 768px) {
+            #video {
+                width: 80%;
+                top: 30%;
+            }
+
+            #capture-button {
+                padding: 10px 30px;
+                font-size: 1.2em;
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            #video {
+                width: 90%;
+                top: 35%;
+            }
+
+            #capture-button {
+                padding: 8px 25px;
+                font-size: 1em;
+            }
         }
     </style>
 </head>
 
 <body>
-
     <div id="camera-frame">
-        <video id="video" autoplay playsinline></video>
         <img id="bgImage" src="./bg_1.png" />
-   </div>
+        <video id="video" autoplay playsinline></video>
+    </div>
     <button id="capture-button">צילום</button>
 
     <!-- Error message display -->
     <div id="error-message">Unable to access the camera. Please check your permissions.</div>
+    
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
     <script>
-
         const bgImageElement = document.querySelector('#bgImage');
-        const originalWidth = bgImageElement.naturalWidth;
-        const originalHeight = bgImageElement.naturalHeight;
-        const aspectRatio = originalWidth / originalHeight;
-
-        // Select the video element and error message div
         const video = document.getElementById('video');
         const errorMessage = document.getElementById('error-message');
         const captureButton = document.getElementById('capture-button');
@@ -221,14 +171,12 @@
                     finalCanvas.height = canvas.height;
 
                     const finalCtx = finalCanvas.getContext('2d');
-                    // get document width and height
                     const windowSize = {
                         width: document.documentElement.clientWidth,
                         height: document.documentElement.clientHeight
                     };
 
                     const videoCanvasAspect = windowSize.height > windowSize.width ? 3 / 4 : 4 / 3;
-
 
                     let videoHeight = finalCanvas.height / 100 * 65;
                     let videoWidth = videoHeight * videoCanvasAspect;
@@ -238,26 +186,13 @@
 
                     const videoCtx = videoCanvas.getContext('2d');
                     const imageData = videoCtx.getImageData(0, 0, videoCanvas.width, videoCanvas.height);
-                    const data = imageData.data;
-
-                   /* remove the grey option for the video 
-                    for (let i = 0; i < data.length; i += 4) {
-                        const r = data[i];
-                        const g = data[i + 1];
-                        const b = data[i + 2];
-                        const gray = 0.3 * r + 0.59 * g + 0.11 * b;
-                        const contrastGray = gray * 0.5 + 128 * 0.5; // Lower the contrast by blending with mid-gray
-                        data[i] = data[i + 1] = data[i + 2] = gray;
-                    } */
-
+                    
                     videoCtx.putImageData(imageData, 0, 0);
-
 
                     // Draw the video content on the final canvas with the 4:3 aspect ratio
                     finalCtx.drawImage(videoCanvas, 0, 0, videoCanvas.width, videoCanvas.height, videoX, videoY, videoWidth, videoHeight);
 
                     finalCtx.drawImage(canvas, 0, 0, finalCanvas.width, finalCanvas.height);
-
 
                     let a = document.createElement('a');
                     a.download = 'image.jpg';
@@ -265,13 +200,10 @@
                     a.click();
                 })
             });
-
         }
+
         // Add event listener to the capture button
         captureButton.addEventListener('click', captureDiv);
     </script>
-
 </body>
-
-
 </html>
