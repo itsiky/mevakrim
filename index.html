@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>מרכז המבקרים</title>
+    <title>visitors center</title>
     <style>
         * {
             margin: 0;
@@ -49,14 +49,14 @@
 
         #video {
             position: absolute;
-            top: 25%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 65%;
-            height: auto;
+            top: 5%; /* Adjusted from 25% to 5% */
+            right: 5%; /* Changed from left to right */
+            transform: none; /* Removed previous transform */
+            width: 35%; /* Reduced width */
             aspect-ratio: 4 / 3;
-            max-height: 65%;
+            max-height: 35%; /* Reduced height */
             z-index: 2;
+            border: 2px solid white; /* Optional: adds a border to the video */
         }
 
         #capture-button {
@@ -178,18 +178,18 @@
                 
                 // Calculate video dimensions maintaining aspect ratio
                 const videoAspectRatio = tempCanvas.width / tempCanvas.height;
-                let videoWidth = canvasWidth * 0.65; // 65% of canvas width
+                let videoWidth = canvasWidth * 0.35; // Reduced from 0.65 to 0.35
                 let videoHeight = videoWidth / videoAspectRatio;
 
-                // Ensure video height doesn't exceed 65% of canvas height
-                if (videoHeight > canvasHeight * 0.65) {
-                    videoHeight = canvasHeight * 0.65;
+                // Ensure video height doesn't exceed 35% of canvas height
+                if (videoHeight > canvasHeight * 0.35) {
+                    videoHeight = canvasHeight * 0.35;
                     videoWidth = videoHeight * videoAspectRatio;
                 }
 
-                // Position video (centered horizontally, 25% from top)
-                const videoX = (canvasWidth - videoWidth) / 2;
-                const videoY = canvasHeight * 0.25;
+                // Position video in the right upper corner
+                const videoX = canvasWidth - videoWidth - (canvasWidth * 0.05); // 5% from right edge
+                const videoY = canvasHeight * 0.05; // 5% from top
 
                 // Draw video onto the canvas using the temporary canvas with correct dimensions
                 finalCtx.drawImage(
