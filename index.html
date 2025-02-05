@@ -43,7 +43,7 @@
             background-size: contain;
             justify-content: center;
             align-items: center;
-            background-image: url('./bg4.png');
+            background-image: url('./bg_5.png');
             aspect-ratio: 280 / 185;
         }
 
@@ -124,6 +124,14 @@
             transform: scale(1.05);
         }
 
+        @media (max-width: 600px) {
+          #capture-button {
+            padding: 20px 40px;   /* Larger padding for a bigger touch area */
+            font-size: 1.5em;     /* Larger text for better readability */
+            bottom: 30px;         /* Slightly adjusted vertical positioning */
+          }
+        }
+
         /* Button styling  
         #capture-button {
             padding: 10px 20px;
@@ -164,7 +172,7 @@
 
     <div id="camera-frame">
         <video id="video" autoplay playsinline></video>
-        <img id="bgImage" src="./bg4.png" />
+        <img id="bgImage" src="./bg_5.png" />
    </div>
     <button id="capture-button">צילום</button>
 
