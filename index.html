@@ -164,41 +164,62 @@
         window.addEventListener('load', initCamera);
 
         function captureDiv() {
-            html2canvas(document.querySelector('#bgImage'), { useCORS: true, allowTaint: true, backgroundColor: null }).then(canvas => {
-                html2canvas(document.querySelector('#video'), { useCORS: true, allowTaint: true }).then(videoCanvas => {
+            // Capture background image
+            html2canvas(document.querySelector('#bgImage'), { 
+                useCORS: true, 
+                allowTaint: true, 
+                backgroundColor: null,
+                scale: 1, // Ensure no scaling
+                logging: false // Disable logging for performance
+            }).then(bgCanvas => {
+                // Capture video
+                html2canvas(document.querySelector('#video'), { 
+                    useCORS: true, 
+                    allowTaint: true,
+                    scale: 1,
+                    logging: false
+                }).then(videoCanvas => {
+                    // Create a new canvas with the exact dimensions of the background image
                     const finalCanvas = document.createElement('canvas');
-                    finalCanvas.width = canvas.width;
-                    finalCanvas.height = canvas.height;
-
+                    finalCanvas.width = bgCanvas.width;
+                    finalCanvas.height = bgCanvas.height;
                     const finalCtx = finalCanvas.getContext('2d');
-                    const windowSize = {
-                        width: document.documentElement.clientWidth,
-                        height: document.documentElement.clientHeight
-                    };
 
-                    const videoCanvasAspect = windowSize.height > windowSize.width ? 3 / 4 : 4 / 3;
+                    // Draw the background image first (full canvas)
+                    finalCtx.drawImage(bgCanvas, 0, 0);
 
-                    let videoHeight = finalCanvas.height / 100 * 65;
-                    let videoWidth = videoHeight * videoCanvasAspect;
-
-                    const videoX = finalCanvas.width - (finalCanvas.width * (windowSize.height > windowSize.width ? .32 : .45))
-                    const videoY = finalCanvas.height / 100 * 25;
-
-                    const videoCtx = videoCanvas.getContext('2d');
-                    const imageData = videoCtx.getImageData(0, 0, videoCanvas.width, videoCanvas.height);
+                    // Calculate video positioning
+                    const canvasWidth = finalCanvas.width;
+                    const canvasHeight = finalCanvas.height;
                     
-                    videoCtx.putImageData(imageData, 0, 0);
+                    // Calculate video dimensions maintaining aspect ratio
+                    const videoAspectRatio = videoCanvas.width / videoCanvas.height;
+                    let videoWidth = canvasWidth * 0.65; // 65% of canvas width
+                    let videoHeight = videoWidth / videoAspectRatio;
 
-                    // Draw the video content on the final canvas with the 4:3 aspect ratio
-                    finalCtx.drawImage(videoCanvas, 0, 0, videoCanvas.width, videoCanvas.height, videoX, videoY, videoWidth, videoHeight);
+                    // Ensure video height doesn't exceed 65% of canvas height
+                    if (videoHeight > canvasHeight * 0.65) {
+                        videoHeight = canvasHeight * 0.65;
+                        videoWidth = videoHeight * videoAspectRatio;
+                    }
 
-                    finalCtx.drawImage(canvas, 0, 0, finalCanvas.width, finalCanvas.height);
+                    // Position video (centered horizontally, 25% from top)
+                    const videoX = (canvasWidth - videoWidth) / 2;
+                    const videoY = canvasHeight * 0.25;
 
+                    // Draw video onto the canvas
+                    finalCtx.drawImage(
+                        videoCanvas, 
+                        0, 0, videoCanvas.width, videoCanvas.height, 
+                        videoX, videoY, videoWidth, videoHeight
+                    );
+
+                    // Save the image
                     let a = document.createElement('a');
                     a.download = 'image.jpg';
-                    a.href = finalCanvas.toDataURL('image/jpeg');
+                    a.href = finalCanvas.toDataURL('image/jpeg', 0.9); // High quality
                     a.click();
-                })
+                });
             });
         }
 
