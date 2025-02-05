@@ -27,15 +27,6 @@
             position: relative;
         }
 
-        #content {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
         #camera-frame {
             position: absolute;
             top: 0;
@@ -52,6 +43,7 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            object-position: center;
             z-index: 1;
         }
 
@@ -100,31 +92,6 @@
             font-size: 1em;
             z-index: 4;
         }
-
-        /* Responsive adjustments */
-        @media screen and (max-width: 768px) {
-            #video {
-                width: 80%;
-                top: 30%;
-            }
-
-            #capture-button {
-                padding: 10px 30px;
-                font-size: 1.2em;
-            }
-        }
-
-        @media screen and (max-width: 480px) {
-            #video {
-                width: 90%;
-                top: 35%;
-            }
-
-            #capture-button {
-                padding: 8px 25px;
-                font-size: 1em;
-            }
-        }
     </style>
 </head>
 
@@ -164,63 +131,77 @@
         window.addEventListener('load', initCamera);
 
         function captureDiv() {
-            // Capture background image
-            html2canvas(document.querySelector('#bgImage'), { 
-                useCORS: true, 
-                allowTaint: true, 
-                backgroundColor: null,
-                scale: 1, // Ensure no scaling
-                logging: false // Disable logging for performance
-            }).then(bgCanvas => {
-                // Capture video
-                html2canvas(document.querySelector('#video'), { 
+            // Wait for the background image to load completely
+            bgImageElement.onload = function() {
+                // Capture background image
+                html2canvas(bgImageElement, { 
                     useCORS: true, 
-                    allowTaint: true,
-                    scale: 1,
-                    logging: false
-                }).then(videoCanvas => {
-                    // Create a new canvas with the exact dimensions of the background image
-                    const finalCanvas = document.createElement('canvas');
-                    finalCanvas.width = bgCanvas.width;
-                    finalCanvas.height = bgCanvas.height;
-                    const finalCtx = finalCanvas.getContext('2d');
+                    allowTaint: true, 
+                    backgroundColor: null,
+                    logging: false,
+                    scale: 1
+                }).then(bgCanvas => {
+                    // Capture video
+                    html2canvas(document.querySelector('#video'), { 
+                        useCORS: true, 
+                        allowTaint: true,
+                        logging: false,
+                        scale: 1
+                    }).then(videoCanvas => {
+                        // Create a new canvas with the exact dimensions of the background image
+                        const finalCanvas = document.createElement('canvas');
+                        
+                        // Use the natural width and height of the background image
+                        const bgNaturalWidth = bgImageElement.naturalWidth;
+                        const bgNaturalHeight = bgImageElement.naturalHeight;
+                        
+                        finalCanvas.width = bgNaturalWidth;
+                        finalCanvas.height = bgNaturalHeight;
+                        
+                        const finalCtx = finalCanvas.getContext('2d');
 
-                    // Draw the background image first (full canvas)
-                    finalCtx.drawImage(bgCanvas, 0, 0);
+                        // Draw the background image first, using its natural dimensions
+                        finalCtx.drawImage(bgImageElement, 0, 0, bgNaturalWidth, bgNaturalHeight);
 
-                    // Calculate video positioning
-                    const canvasWidth = finalCanvas.width;
-                    const canvasHeight = finalCanvas.height;
-                    
-                    // Calculate video dimensions maintaining aspect ratio
-                    const videoAspectRatio = videoCanvas.width / videoCanvas.height;
-                    let videoWidth = canvasWidth * 0.65; // 65% of canvas width
-                    let videoHeight = videoWidth / videoAspectRatio;
+                        // Calculate video positioning based on natural image dimensions
+                        const canvasWidth = finalCanvas.width;
+                        const canvasHeight = finalCanvas.height;
+                        
+                        // Calculate video dimensions maintaining aspect ratio
+                        const videoAspectRatio = videoCanvas.width / videoCanvas.height;
+                        let videoWidth = canvasWidth * 0.65; // 65% of canvas width
+                        let videoHeight = videoWidth / videoAspectRatio;
 
-                    // Ensure video height doesn't exceed 65% of canvas height
-                    if (videoHeight > canvasHeight * 0.65) {
-                        videoHeight = canvasHeight * 0.65;
-                        videoWidth = videoHeight * videoAspectRatio;
-                    }
+                        // Ensure video height doesn't exceed 65% of canvas height
+                        if (videoHeight > canvasHeight * 0.65) {
+                            videoHeight = canvasHeight * 0.65;
+                            videoWidth = videoHeight * videoAspectRatio;
+                        }
 
-                    // Position video (centered horizontally, 25% from top)
-                    const videoX = (canvasWidth - videoWidth) / 2;
-                    const videoY = canvasHeight * 0.25;
+                        // Position video (centered horizontally, 25% from top)
+                        const videoX = (canvasWidth - videoWidth) / 2;
+                        const videoY = canvasHeight * 0.25;
 
-                    // Draw video onto the canvas
-                    finalCtx.drawImage(
-                        videoCanvas, 
-                        0, 0, videoCanvas.width, videoCanvas.height, 
-                        videoX, videoY, videoWidth, videoHeight
-                    );
+                        // Draw video onto the canvas
+                        finalCtx.drawImage(
+                            videoCanvas, 
+                            0, 0, videoCanvas.width, videoCanvas.height, 
+                            videoX, videoY, videoWidth, videoHeight
+                        );
 
-                    // Save the image
-                    let a = document.createElement('a');
-                    a.download = 'image.jpg';
-                    a.href = finalCanvas.toDataURL('image/jpeg', 0.9); // High quality
-                    a.click();
+                        // Save the image
+                        let a = document.createElement('a');
+                        a.download = 'image.jpg';
+                        a.href = finalCanvas.toDataURL('image/jpeg', 0.9); // High quality
+                        a.click();
+                    });
                 });
-            });
+            };
+
+            // Trigger onload if image is already loaded
+            if (bgImageElement.complete) {
+                bgImageElement.onload();
+            }
         }
 
         // Add event listener to the capture button
