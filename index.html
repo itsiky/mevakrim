@@ -182,10 +182,14 @@
                 let videoHeight = videoWidth / videoAspectRatio;
 
                 // Ensure video height doesn't exceed 35% of canvas height
-                if (videoHeight > canvasHeight * 0.35) {
-                    videoHeight = canvasHeight * 0.35;
-                    videoWidth = videoHeight * videoAspectRatio;
-                }
+
+                 videoHeight = canvasHeight * 0.30;
+                 videoWidth = videoHeight * videoAspectRatio;
+                
+                //if (videoHeight > canvasHeight * 0.35) {
+                  //  videoHeight = canvasHeight * 0.35;
+                   // videoWidth = videoHeight * videoAspectRatio;
+                // }
 
                 // Position video in the right upper corner
                 const videoX = canvasWidth - videoWidth - (canvasWidth * 0.07); // 7% from right edge
