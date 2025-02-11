@@ -49,12 +49,12 @@
 
         #video {
             position: absolute;
-            top: 5%; /* Adjusted from 25% to 5% */
+            bottom: 10%; /* Adjusted from 25% to 5% */
             right: 5%; /* Changed from left to right */
             transform: none; /* Removed previous transform */
-            width: 40%; /* Reduced width */
+            width: 37%; /* Reduced width */
             aspect-ratio: 9 /16;
-            max-height: 40%; /* Reduced height */
+            max-height: 37%; /* Reduced height */
             z-index: 2;
             border: 1px solid white; /* Optional: adds a border to the video */
         }
@@ -97,7 +97,7 @@
 
 <body>
     <div id="camera-frame">
-        <img id="bgImage" src="./template1.png" />
+        <img id="bgImage" src="/images/template4.png"/>
         <video id="video" autoplay playsinline></video>
     </div>
     <button id="capture-button">צילום</button>
@@ -178,7 +178,7 @@
                 
                 // Calculate video dimensions maintaining aspect ratio
                 const videoAspectRatio = tempCanvas.width / tempCanvas.height;
-                let videoWidth = canvasWidth * 0.35; // Reduced from 0.65 to 0.35
+                let videoWidth = canvasWidth * 0.25; // Reduced from 0.65 to 0.35
                 let videoHeight = videoWidth / videoAspectRatio;
 
                 // Ensure video height doesn't exceed 35% of canvas height
@@ -188,8 +188,8 @@
                 }
 
                 // Position video in the right upper corner
-                const videoX = canvasWidth - videoWidth - (canvasWidth * 0.05); // 5% from right edge
-                const videoY = canvasHeight * 0.05; // 5% from top
+                const videoX = canvasWidth - videoWidth - (canvasWidth * 0.07); // 7% from right edge
+                const videoY = canvasHeight * 0.5; // 50% from top
 
                 // Draw video onto the canvas using the temporary canvas with correct dimensions
                 finalCtx.drawImage(
