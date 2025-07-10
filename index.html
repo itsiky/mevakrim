@@ -50,7 +50,7 @@
         #video {
             position: absolute;
             bottom: 10%; /* Adjusted from 25% to 5% */
-            right: 5%; /* Changed from left to right */
+            left: 5%; /* Changed from left to right */
             transform: none; /* Removed previous transform */
             width: 37%; /* Reduced width */
             aspect-ratio: 9 /16;
@@ -188,11 +188,7 @@
                  videoHeight = canvasHeight * 0.26;
                  videoWidth = videoHeight * videoAspectRatio;
                 
-                //if (videoHeight > canvasHeight * 0.35) {
-                  //  videoHeight = canvasHeight * 0.35;
-                   // videoWidth = videoHeight * videoAspectRatio;
-                // }
-
+            
                 // Position video in the right upper corner
                 const videoX = canvasWidth - videoWidth - (canvasWidth * 0.07); // 7% from right edge
                 const videoY = canvasHeight * 0.54; // 50% from top
