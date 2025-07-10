@@ -49,7 +49,7 @@
 
         #video {
             position: absolute;
-            bottom: 15%; /* Adjusted from 25% to 5% */
+            bottom: 12%; /* Adjusted from 25% to 5% */
             left: 5%; /* Changed from left to right */
             transform: none; /* Removed previous transform */
             width: 37%; /* Reduced width */
@@ -189,9 +189,9 @@
                  videoWidth = videoHeight * videoAspectRatio;
                 
             
-                // Position video in the right upper corner
-                const videoX = canvasWidth - videoWidth - (canvasWidth * 0.07); // 7% from right edge
-                const videoY = canvasHeight * 0.54; // 50% from top
+                // Position video in the left lower corner (to match CSS)
+                const videoX = canvasWidth * 0.05; // 5% from left edge (matches CSS)
+                const videoY = canvasHeight - videoHeight - (canvasHeight * 0.12); // 12% from bottom
 
                 // Draw video onto the canvas using the temporary canvas with correct dimensions
                 finalCtx.drawImage(
