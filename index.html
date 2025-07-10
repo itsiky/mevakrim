@@ -163,16 +163,16 @@
                 const finalCanvas = document.createElement('canvas');
                 
                 // Use the natural width and height of the background image
-                const bgNaturalWidth = bgImageElement.naturalWidth;
-                const bgNaturalHeight = bgImageElement.naturalHeight;
+                const bgDisplayWidth = bgImageElement.clientWidth;
+                const bgDisplayHeight = bgImageElement.clientHeight;
                 
-                finalCanvas.width = bgNaturalWidth;
-                finalCanvas.height = bgNaturalHeight;
+                finalCanvas.width = bgDisplayWidth;
+                finalCanvas.height = bgDisplayHeight;
                 
                 const finalCtx = finalCanvas.getContext('2d');
 
                 // Draw the background image first, using its natural dimensions
-                finalCtx.drawImage(bgImageElement, 0, 0, bgNaturalWidth, bgNaturalHeight);
+                finalCtx.drawImage(bgImageElement, 0, 0, bgDisplayWidth, bgDisplayHeight);
 
                 // Calculate video positioning based on natural image dimensions
                 const canvasWidth = finalCanvas.width;
